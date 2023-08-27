@@ -1,34 +1,30 @@
-import { POSTS_ACTION_TYPES } from "./posts.types";
+import { CREATE, DELETE, FETCH_ALL, LIKE, UPDATE } from "./posts.types";
 
-export const POST_INITIAL_STATE = {
-	data: [],
-	loading: false,
-	error: null,
-};
+// export const POST_INITIAL_STATE = {
+// 	data: [],
+// 	loading: false,
+// 	error: null,
+// };
 
-export const postsReducer = (state = POST_INITIAL_STATE, action = {}) => {
+export const postsReducer = (posts = [], action = {}) => {
 	const { type, payload } = action;
 
 	switch (type) {
-		// LIST API RESULT
-		case POSTS_ACTION_TYPES.FETCH_DATA_START:
-			return {
-				...state,
-				loading: true,
-			};
-		case POSTS_ACTION_TYPES.FETCH_DATA_SUCCESS:
-			return {
-				...state,
-				loading: false,
-				data: payload.posts,
-			};
-		case POSTS_ACTION_TYPES.FETCH_DATA_FAILED:
-			return {
-				...state,
-				loading: false,
-				error: payload,
-			};
+		case FETCH_ALL:
+			return payload;
+		case LIKE:
+			return posts.map((post) =>
+				post._id === action.payload._id ? action.payload : post
+			);
+		case CREATE:
+			return [...posts, action.payload];
+		case UPDATE:
+			return posts.map((post) =>
+				post._id === action.payload._id ? action.payload : post
+			);
+		case DELETE:
+			return posts.filter((post) => post._id !== action.payload);
 		default:
-			return state;
+			return posts;
 	}
 };

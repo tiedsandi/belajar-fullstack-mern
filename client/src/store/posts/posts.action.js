@@ -1,26 +1,23 @@
-import { POSTS_ACTION_TYPES } from "./posts.types";
-import { createAction } from "../../utils/reducers.utils";
 import api from "../api";
-
-export const fetchPostStart = () =>
-	createAction(POSTS_ACTION_TYPES.FETCH_DATA_START);
-
-export const fetchPostuccess = (postsArr) =>
-	createAction(POSTS_ACTION_TYPES.FETCH_DATA_SUCCESS, {
-		posts: postsArr.data,
-	});
-
-export const fetchPostFailed = (error) =>
-	createAction(POSTS_ACTION_TYPES.FETCH_DATA_FAILED, error);
+import { CREATE, FETCH_ALL } from "./posts.types";
 
 export const getPosts = () => {
 	return async (dispatch) => {
-		dispatch(fetchPostStart());
 		try {
-			const postsArr = await api.get("/posts");
-			dispatch(fetchPostuccess(postsArr));
+			const { data } = await api.get("/posts");
+			dispatch({ type: FETCH_ALL, payload: data });
 		} catch (error) {
-			dispatch(fetchPostFailed(error));
+			console.log(error);
 		}
 	};
+};
+
+export const createPost = (post) => async (dispatch) => {
+	try {
+		const { data } = await api.post("/posts", post);
+
+		dispatch({ type: CREATE, payload: data });
+	} catch (error) {
+		console.log(error.message);
+	}
 };
