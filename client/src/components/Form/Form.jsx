@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
 import FileBase from "react-file-base64";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import useStyles from "./styles";
-import { createPost, updatePost } from "../../store/posts/posts.action";
+import { createPostAsync, setCurrentId, updatePostAsync } from "../../store/posts/posts.action";
 
-const Form = ({ cuurentId, setCurrentId }) => {
+const Form = ({ curentId }) => {
 	const [postData, setPostData] = useState({
 		creator: "",
 		title: "",
@@ -14,40 +14,49 @@ const Form = ({ cuurentId, setCurrentId }) => {
 		tags: "",
 		selectedFile: "",
 	});
+
+	const post = useSelector((state) => {
+		if (curentId && state.post.posts) {
+			return state.post.posts.find((p) => p._id === curentId);
+		}
+		return null;
+	});
+
 	const classes = useStyles();
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (post) setPostData(post);
+	}, [post]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		if (cuurentId) {
-			dispatch(updatePost(cuurentId, postData));
+		if (curentId) {
+			dispatch(updatePostAsync(curentId, postData));
+			clear();
 		} else {
-			dispatch(createPost(postData));
+			dispatch(createPostAsync(postData));
+			clear();
 		}
 	};
 
-	const clear = () => {};
+	const clear = () => {
+		dispatch(setCurrentId(null));
+		setPostData({ creator: "", title: "", message: "", tags: "", selectedFile: "" });
+	};
 
 	return (
 		<Paper className={classes.paper}>
-			<form
-				autoComplete="off"
-				noValidate
-				className={`${classes.root} ${classes.form}`}
-				onSubmit={handleSubmit}
-			>
-				<Typography variant="h6">Creating a Memory</Typography>
+			<form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
+				<Typography variant="h6">{curentId ? "Editing" : "Creating"} a Memory</Typography>
 				<TextField
 					name="creator"
 					variant="outlined"
 					label="Creator"
 					fullWidth
 					value={postData.creator}
-					onChange={
-						(e) => setPostData({ ...postData, creator: e.target.value })
-						// @audit-info ...postData / sparate data, digunakan jika hanya mau mengubah 1 atribut saja, dan data sebelumnya sama seperti sebelumnya maka gunakan ...
-					}
+					onChange={(e) => setPostData({ ...postData, creator: e.target.value })}
 				/>
 				<TextField
 					name="title"
@@ -63,9 +72,7 @@ const Form = ({ cuurentId, setCurrentId }) => {
 					label="Message"
 					fullWidth
 					value={postData.message}
-					onChange={(e) =>
-						setPostData({ ...postData, message: e.target.value })
-					}
+					onChange={(e) => setPostData({ ...postData, message: e.target.value })}
 				/>
 				<TextField
 					name="tags"
@@ -79,9 +86,7 @@ const Form = ({ cuurentId, setCurrentId }) => {
 					<FileBase
 						type="file"
 						multiple={false}
-						onDone={({ base64 }) =>
-							setPostData({ ...postData, selectedFile: base64 })
-						}
+						onDone={({ base64 }) => setPostData({ ...postData, selectedFile: base64 })}
 					/>
 				</div>
 				<Button
@@ -110,3 +115,5 @@ const Form = ({ cuurentId, setCurrentId }) => {
 };
 
 export default Form;
+
+// @audit-info ...postData / sparate data, digunakan jika hanya mau mengubah 1 atribut saja, dan data sebelumnya sama seperti sebelumnya maka gunakan ...
