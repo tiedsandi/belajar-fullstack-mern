@@ -33,7 +33,7 @@ export const postsReducer = (state = POST_INITIAL_STATE, action = {}) => {
 				...state,
 				isLoading: payload.isLoading,
 				error: payload.error || null,
-				posts: state.posts.map((post) => (post._id === payload._id ? payload.data : post)),
+				posts: state.posts.map((post) => (post._id === payload.data?._id ? payload.data : post)),
 			};
 
 		default:
