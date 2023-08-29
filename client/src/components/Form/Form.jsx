@@ -29,6 +29,11 @@ const Form = ({ curentId }) => {
 		if (post) setPostData(post);
 	}, [post]);
 
+	const clear = () => {
+		dispatch(setCurrentId(null));
+		setPostData({ creator: "", title: "", message: "", tags: "", selectedFile: "" });
+	};
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
@@ -39,11 +44,6 @@ const Form = ({ curentId }) => {
 			dispatch(createPostAsync(postData));
 			clear();
 		}
-	};
-
-	const clear = () => {
-		dispatch(setCurrentId(null));
-		setPostData({ creator: "", title: "", message: "", tags: "", selectedFile: "" });
 	};
 
 	return (

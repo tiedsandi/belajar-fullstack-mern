@@ -1,5 +1,5 @@
 import api from "../api";
-import { CREATE_POST, FETCH_ALL, SET_CURRENT_ID, UPDATE_POST } from "./posts.types";
+import { CREATE_POST, DELETE_POST, FETCH_ALL, SET_CURRENT_ID, UPDATE_POST } from "./posts.types";
 
 const createAction = (type, payload) => ({ type, payload });
 
@@ -41,6 +41,18 @@ export const updatePostAsync = (id, updatePost) => {
 		} catch (error) {
 			console.log(error);
 			dispatch(createAction(UPDATE_POST, { isLoading: false, error }));
+		}
+	};
+};
+export const deletePostAsync = (id) => {
+	return async (dispatch) => {
+		dispatch(createAction(DELETE_POST, { isLoading: true }));
+		try {
+			await api.delete(`/posts/${id}`);
+			dispatch(createAction(DELETE_POST, { isLoading: false, id }));
+		} catch (error) {
+			console.log(error);
+			dispatch(createAction(DELETE_POST, { isLoading: false, error }));
 		}
 	};
 };
