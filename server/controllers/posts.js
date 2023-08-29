@@ -25,13 +25,9 @@ export const createPost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
 	const { id } = req.params;
-	//  const { title, message, creator, selectedFile, tags } = req.body;
 	const post = req.body;
 
 	if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
-
-	// const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
-	// await PostMessage.findByIdAndUpdate(id, updatedPost, { new: true });
 	const updatePost = await PostMessage.findByIdAndUpdate(id, { ...post, id }, { new: true });
 
 	res.json(updatePost);
@@ -41,10 +37,20 @@ export const deletePost = async (req, res) => {
 	const { id } = req.params;
 
 	if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
-
 	await PostMessage.findByIdAndRemove(id);
 
 	res.json({ message: "Post deleted succesfuly" });
+};
+
+export const likePost = async (req, res) => {
+	const { id } = req.params;
+
+	if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+
+	const post = await PostMessage.findById(id);
+	const updatePost = await PostMessage.findByIdAndUpdate(id, { likeCount: post.likeCount + 1 }, { new: true });
+
+	res.json(updatePost);
 };
 
 //@audit-info get more information for status
