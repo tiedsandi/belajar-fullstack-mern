@@ -6,7 +6,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import moment from "moment";
 import useStyles from "./styles";
 import { useDispatch } from "react-redux";
-import { deletePostAsync, setCurrentId } from "../../../store/posts/posts.action";
+import { deletePostAsync, setCurrentId, likePostAsync } from "../../../store/posts/posts.action";
 
 const Post = ({ post }) => {
 	const classes = useStyles();
@@ -16,7 +16,10 @@ const Post = ({ post }) => {
 		<Card className={classes.card}>
 			<CardMedia
 				className={classes.media}
-				image={post.selectedFile || "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png"}
+				image={
+					post.selectedFile ||
+					"https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png"
+				}
 				title={post.title}
 			/>
 			<div className={classes.overlay}>
@@ -42,7 +45,7 @@ const Post = ({ post }) => {
 				</Typography>
 			</CardContent>
 			<CardActions className={classes.cardActions}>
-				<Button size="small" color="primary" onClick={() => {}}>
+				<Button size="small" color="primary" onClick={() => dispatch(likePostAsync(post._id))}>
 					<ThumbUpAltIcon fontSize="small" />
 					Like {post.likeCount}
 				</Button>
